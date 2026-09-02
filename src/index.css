@@ -1,0 +1,76 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+  --bg-main: #f8f8f6;
+  --text-main: #1c1917;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(228, 225, 220, 0.9);
+}
+
+.dark {
+  color-scheme: dark;
+  --bg-main: #0c0a09;
+  --text-main: #f5f5f4;
+  --card-bg: rgba(26, 23, 21, 0.85);
+  --card-border: rgba(68, 64, 60, 0.7);
+}
+
+html, body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* Radiant Ambient Floating Glow Animations */
+@keyframes ambientDrift1 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(40px, -30px) scale(1.1);
+  }
+}
+
+@keyframes ambientDrift2 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(-35px, 35px) scale(1.08);
+  }
+}
+
+@keyframes ambientDrift3 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(25px, 20px) scale(0.95);
+  }
+}
+
+.animate-ambient-1 {
+  animation: ambientDrift1 18s ease-in-out infinite;
+}
+
+.animate-ambient-2 {
+  animation: ambientDrift2 22s ease-in-out infinite;
+}
+
+.animate-ambient-3 {
+  animation: ambientDrift3 26s ease-in-out infinite;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+}
