@@ -127,6 +127,10 @@ async function generateContentWithFallback(
 async function startServer() {
   const app = express();
 
+  // Cloud Run runs behind a trusted reverse proxy.
+  // Trust the first proxy hop so rate limiting can identify client IPs correctly.
+  app.set("trust proxy", 1);
+
   // Top-Level Request Deserialization
   app.use(express.json({ limit: "5mb" }));
   app.use(express.urlencoded({ extended: true, limit: "5mb" }));
