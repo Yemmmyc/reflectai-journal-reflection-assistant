@@ -19,11 +19,16 @@ ReflectAI is a full-stack web application designed for private, mindful journali
 ```
 
 ### Security & Privacy Protections
-1. **Zero Unauthenticated Access**: Unauthenticated visitors only see the serene landing page with Google Sign-In.
+1. **Authentication-Gated Application**: Unauthenticated visitors only see the landing page; protected reflection APIs require a verified Firebase ID token.
 2. **Owner-Bound Firestore Isolation**: Security rules restrict all queries to `/users/{request.auth.uid}/**`. Users cannot view, modify, or list another user's reflections.
 3. **Zero Secrets in Frontend**: `GEMINI_API_KEY` is strictly held on the server side and never sent to browser clients.
-4. **Resilient Model Fallback Ladder**: Primary: `gemini-3.6-flash` &rarr; Fallback: `gemini-3.1-flash-lite` &rarr; Dynamic: `gemini-flash-latest` &rarr; Deep Reasoning: `gemini-3.7-flash`.
+4. **Resilient Gemini Model Fallback**: Requests start with `gemini-3.6-flash`. If the selected model is temporarily unavailable or fails, ReflectAI automatically attempts the next configured model in the fallback ladder.
 5. **Defensive Payload Ingestion**: Zero-crash sanitation that strips `undefined` fields prior to Firestore writes.
+
+---
+
+### Server-Side Identity Verification
+Firebase ID tokens are verified by the Express backend before Gemini reflection or synthesis requests are processed. The authenticated UID is taken from the verified token rather than from a client-supplied UID.
 
 ---
 
@@ -132,9 +137,9 @@ gcloud run deploy reflect-ai \
 
 ---
 
-## 6. Required Campaign Verification Binding
+## 6. Optional Campaign Verification Binding
 
-To register the service for automated challenge verification, apply the mandatory label:
+If the challenge requires a verification label, apply it to the deployed Cloud Run service:
 
 ```bash
 gcloud run services update reflect-ai \
@@ -146,7 +151,7 @@ gcloud run services update reflect-ai \
 
 ## 7. Functional Stability & Testing Walkthrough
 
-The following test walkthrough covers every user interaction and system flow:
+The following test walkthrough covers the primary functional flows validated during development:
 
 | Test Case | Scenario / Interaction | Expected Result |
 | :--- | :--- | :--- |
@@ -156,6 +161,6 @@ The following test walkthrough covers every user interaction and system flow:
 | **TC-04: Multi-Turn Conversation** | User submits a follow-up question in the same session. | Gemini receives the conversational history and replies in context. Both turns are saved in Firestore. |
 | **TC-05: Strategy & Mood Switch** | User toggles strategy (e.g. Brainstorm, Clarity) or mood. | Reflection adjustments update context dynamically, reflected in UI badges and persisted metadata. |
 | **TC-06: AI Insights & Synthesis** | User clicks "Synthesize Insights". | Endpoint `/api/gemini/summarize` generates an executive summary, suggested title, and key theme tags. |
-| **TC-07: Past History & Search** | User navigates to "Past Entries" tab and searches keywords or filters by strategy. | User sees their past entries sorted by date, with instant search filtering and markdown export option. |
+| **TC-07: Past History & Search** | User navigates to "Past Entries" tab and searches keywords or filters by strategy. | User sees their past entries sorted by date, with instant search filtering and a copy-to-clipboard Markdown export option. |
 | **TC-08: Deletion & Isolation** | User clicks delete on an entry and confirms. | Entry is permanently removed from `/users/{userId}/interactions/{id}` in Firestore and removed from list. |
 | **TC-09: Sign Out** | User clicks sign-out button in header. | Auth session clears, private state is reset, and user returns to Landing view. |
