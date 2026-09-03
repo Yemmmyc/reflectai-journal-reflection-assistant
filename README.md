@@ -18,6 +18,26 @@ ReflectAI is a full-stack web application designed for private, mindful journali
                         └─► [ Google Cloud Secret Manager (GEMINI_API_KEY) ]
 ```
 
+## Production Deployment & Verification
+
+ReflectAI is deployed and running on **Google Cloud Run** in `us-central1`.
+
+**Production URL:** https://reflect-ai-798342046329.us-central1.run.app
+
+The production deployment has been verified end-to-end with:
+
+- **Firebase Authentication** — Google Sign-In and authenticated sessions
+- **Cloud Run** — full-stack Express/React production hosting
+- **Google Gemini** — Gemini-powered reflection and multi-turn conversations
+- **Google Cloud Secret Manager** — server-side `GEMINI_API_KEY` protection
+- **Cloud Firestore** — persistent, user-isolated journal interactions
+- **Firestore Security Rules** — users can access only their own data
+- **Past Entries** — persisted reflections remain available after sign-out/sign-in
+
+The production application is configured to keep the Gemini API key on the server side and retrieve it from Secret Manager rather than exposing it to browser clients.
+
+---
+
 ### Security & Privacy Protections
 1. **Authentication-Gated Application**: Unauthenticated visitors only see the landing page; protected reflection APIs require a verified Firebase ID token.
 2. **Owner-Bound Firestore Isolation**: Security rules restrict all queries to `/users/{request.auth.uid}/**`. Users cannot view, modify, or list another user's reflections.
